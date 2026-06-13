@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Café Fams</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400;1,700&family=Jost:wght@300;400;500;600&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   CAFÉ FAMS — Warm White & Brown Artisan UI
+   Philosophy: Warm paper + espresso tones, editorial feel
+═══════════════════════════════════════════════════════ */
+:root {
+  --cream:    #FAF6F0;
+  --paper:    #F2EBE0;
+  --paper2:   #EDE2D3;
+  --brown1:   #3D2314;
+  --brown2:   #6B3A25;
+  --brown3:   #9B6245;
+  --brown4:   #C49070;
+  --caramel:  #D4A96A;
+  --latte:    #E8C99A;
+  --text:     #2C1810;
+  --text2:    #5C3D2E;
+  --text3:    #8B6655;
+  --white:    #FFFFFF;
+  --green:    #4A7C59;
+  --red:      #B5412B;
+  --shadow:   rgba(60,30,10,0.12);
+  --shadow2:  rgba(60,30,10,0.06);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Jost', sans-serif;
+  background:var(--cream);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+.bn { font-family:'Hind Siliguri', sans-serif; }
+
+/* ══ NOISE TEXTURE ══ */
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity:0.4;
+}
+
+/* ══ SPLASH ══ */
+#splash {
+  position:fixed; inset:0; z-index:2000;
+  background:var(--brown1);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:20px;
+  transition:opacity 0.8s ease, visibility 0.8s;
+}
+#splash.out { opacity:0; visibility:hidden; }
+.splash-ring {
+  width:80px; height:80px; border-radius:50%;
+  border:2px solid rgba(212,169,106,0.3);
+  display:flex; align-items:center; justify-content:center;
+  animation:ringpulse 2s ease-in-out infinite;
+}
+@keyframes ringpulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(212,169,106,0.4);}
+  50%{box-shadow:0 0 0 16px rgba(212,169,106,0);}
+}
+.splash-icon { font-size:36px; }
+.splash-wordmark {
+  font-family:'Playfair Display', serif;
+  font-size:30px; letter-spacing:4px; font-weight:700;
+  color:var(--latte); text-align:center;
+}
+.splash-tag {
+  font-size:11px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--brown4); font-weight:500;
+}
+.splash-line {
+  width:48px; height:1px; background:var(--caramel);
+  animation:linegrow 1.6s ease forwards;
+}
+@keyframes linegrow { from{width:0;opacity:0} to{width:48px;opacity:1} }
+
+/* ══ ALL SCREENS ══ */
+.screen { display:none; position:relative; z-index:1; }
+.screen.active { display:block; }
+
+/* ══════════════════════════════════════════
+   LANDING PAGE
+══════════════════════════════════════════ */
+#landing {
+  min-height:100vh;
+  background: linear-gradient(170deg, var(--brown1) 0%, #5C2E18 55%, var(--brown2) 100%);
+  position:relative; overflow:hidden;
+}
+
+/* BG circles */
+#landing::before {
+  content:''; position:absolute;
+  width:500px; height:500px; border-radius:50%;
+  background:radial-gradient(circle, rgba(212,169,106,0.06) 0%, transparent 70%);
+  top:-100px; right:-150px; pointer-events:none;
+}
+#landing::after {
+  content:''; position:absolute;
+  width:300px; height:300px; border-radius:50%;
+  background:radial-gradient(circle, rgba(212,169,106,0.04) 0%, transparent 70%);
+  bottom:80px; left:-80px; pointer-events:none;
+}
+
+/* NAV */
+.land-nav {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 22px;
+}
+.land-logo {
+  font-family:'Playfair Display', serif;
+  font-size:22px; font-weight:700; letter-spacing:2px;
+  color:var(--latte);
+}
+.land-nav-links { display:flex; gap:6px; align-items:center; }
+.nav-pill {
+  padding:7px 14px; border-radius:30px; font-size:12px; font-weight:600;
+  letter-spacing:0.5px; cursor:pointer; transition:all 0.2s; border:none;
+  font-family:'Jost', sans-serif;
+}
+.nav-pill.outline {
+  background:transparent; border:1px solid rgba(212,169,106,0.35);
+  color:var(--latte);
+}
+.nav-pill.outline:hover { background:rgba(212,169,106,0.1); }
+.nav-pill.filled {
+  background:var(--caramel); color:var(--brown1); font-weight:700;
+}
+.lang-toggle {
+  display:flex; background:rgba(255,255,255,0.08); border-radius:20px;
+  padding:3px; gap:2px;
+}
+.lang-btn {
+  padding:5px 10px; border-radius:16px; font-size:11px; font-weight:700;
+  cursor:pointer; transition:all 0.2s; border:none; letter-spacing:0.5px;
+  font-family:'Jost', sans-serif;
+}
+.lang-btn.active { background:var(--caramel); color:var(--brown1); }
+.lang-btn:not(.active) { background:transparent; color:rgba(232,201,154,0.6); }
+
+/* HERO */
+.hero {
+  padding:28px 22px 0;
+  display:flex; flex-direction:column; gap:6px;
+}
+.hero-eyebrow {
+  font-size:11px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--caramel); font-weight:500;
+  display:flex; align-items:center; gap:8px;
+}
+.hero-eyebrow::before {
+  content:''; width:24px; height:1px; background:var(--caramel);
+}
+.hero-title {
+  font-family:'Playfair Display', serif;
+  font-size:42px; font-weight:900; line-height:1.05;
+  color:var(--white); letter-spacing:-0.5px;
+}
+.hero-title em { color:var(--caramel); font-style:italic; }
+.hero-desc {
+  font-size:14px; color:rgba(232,201,154,0.75); line-height:1.7;
+  font-weight:300; max-width:320px; margin-top:4px;
+}
+
+/* DISH SCROLL */
+.dish-scroll-label {
+  padding:28px 22px 12px;
+  font-size:11px; letter-spacing:3px; text-transform:uppercase;
+  color:rgba(212,169,106,0.5); font-weight:500;
+}
+.dish-scroll {
+  display:flex; gap:12px; overflow-x:auto;
+  padding:0 22px 20px; scrollbar-width:none;
+}
+.dish-scroll::-webkit-scrollbar { display:none; }
+.dish-card {
+  flex-shrink:0; width:140px;
+  background:rgba(255,255,255,0.07);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(212,169,106,0.15);
+  border-radius:20px; overflow:hidden;
+  cursor:pointer; transition:all 0.25s;
+}
+.dish-card:hover { transform:translateY(-4px); border-color:rgba(212,169,106,0.4); }
+.dish-card-img {
+  width:100%; height:110px; object-fit:cover;
+  background:var(--brown2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:48px;
+}
+.dish-card-img img { width:100%; height:100%; object-fit:cover; }
+.dish-card-body { padding:10px 12px; }
+.dish-card-name { font-size:12px; font-weight:600; color:var(--latte); margin-bottom:2px; }
+.dish-card-price { font-size:13px; font-weight:700; color:var(--caramel); }
+.dish-card-cat { font-size:10px; color:rgba(232,201,154,0.45); margin-top:1px; }
+
+/* INFO STRIP */
+.info-strip {
+  margin:0 22px 24px;
+  display:flex; gap:10px;
+}
+.info-chip {
+  flex:1; background:rgba(255,255,255,0.05);
+  border:1px solid rgba(212,169,106,0.12);
+  border-radius:14px; padding:12px;
+  text-align:center;
+}
+.info-chip-val { font-size:20px; font-weight:700; color:var(--caramel); line-height:1; }
+.info-chip-lbl { font-size:10px; color:rgba(232,201,154,0.5); margin-top:3px; letter-spacing:1px; }
+
+/* CTA */
+.land-cta {
+  padding:0 22px 32px;
+  display:flex; flex-direction:column; gap:10px;
+}
+.cta-main {
+  width:100%; padding:17px; border-radius:18px;
+  background:linear-gradient(135deg, var(--caramel), #B8832A);
+  border:none; font-family:'Playfair Display', serif;
+  font-size:17px; font-weight:700; color:var(--brown1); letter-spacing:0.5px;
+  cursor:pointer; transition:all 0.25s;
+  box-shadow:0 8px 32px rgba(180,110,30,0.35);
+}
+.cta-main:hover { transform:translateY(-2px); box-shadow:0 12px 40px rgba(180,110,30,0.45); }
+.cta-secondary {
+  width:100%; padding:13px; border-radius:14px;
+  background:transparent; border:1px solid rgba(212,169,106,0.25);
+  color:var(--latte); font-family:'Jost', sans-serif;
+  font-size:13px; font-weight:500; cursor:pointer; transition:all 0.2s;
+}
+.cta-secondary:hover { background:rgba(212,169,106,0.08); }
+
+/* ══════════════════════════════════════════
+   ABOUT PAGE
+══════════════════════════════════════════ */
+#about {
+  min-height:100vh;
+  background:var(--cream);
+}
+.about-hero {
+  background:linear-gradient(160deg, var(--brown1) 0%, var(--brown2) 100%);
+  padding:50px 22px 40px;
+  position:relative; overflow:hidden;
+}
+.about-back {
+  display:flex; align-items:center; gap:8px;
+  color:var(--latte); font-size:13px; cursor:pointer;
+  margin-bottom:28px; width:fit-content;
+}
+.about-back:hover { color:var(--caramel); }
+.about-title {
+  font-family:'Playfair Display', serif;
+  font-size:36px; font-weight:900; color:var(--white); line-height:1.1;
+  margin-bottom:8px;
+}
+.about-subtitle { color:var(--caramel); font-size:13px; letter-spacing:1px; }
+.about-body { padding:24px 22px; }
+.about-section { margin-bottom:28px; }
+.about-section-title {
+  font-family:'Playfair Display', serif;
+  font-size:18px; color:var(--brown1); margin-bottom:10px;
+  display:flex; align-items:center; gap:8px;
+}
+.about-text { font-size:14px; color:var(--text2); line-height:1.8; }
+.about-info-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+.about-info-card {
+  background:var(--paper); border-radius:14px; padding:14px;
+  border:1px solid var(--paper2);
+}
+.about-info-icon { font-size:22px; margin-bottom:6px; }
+.about-info-label { font-size:10px; color:var(--text3); letter-spacing:1px; text-transform:uppercase; margin-bottom:2px; }
+.about-info-val { font-size:13px; font-weight:600; color:var(--brown1); }
+.hours-row { display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--paper2); }
+.hours-row:last-child { border-bottom:none; }
+.hours-day { color:var(--text2); }
+.hours-time { font-weight:600; color:var(--brown2); }
+
+/* ══════════════════════════════════════════
+   TABLE SELECT PAGE
+══════════════════════════════════════════ */
+#tableSelect {
+  min-height:100vh;
+  background:var(--cream);
+}
+.ts-header {
+  background:var(--brown1); padding:48px 22px 32px;
+  position:relative;
+}
+.ts-back {
+  display:flex; align-items:center; gap:6px;
+  color:var(--latte); font-size:13px; cursor:pointer; margin-bottom:20px;
+}
+.ts-headline {
+  font-family:'Playfair Display', serif;
+  font-size:28px; font-weight:900; color:var(--white); margin-bottom:6px;
+}
+.ts-sub { color:var(--caramel); font-size:13px; }
+.ts-body { padding:24px 22px; }
+.ts-note {
+  background:var(--paper); border:1px solid var(--paper2);
+  border-radius:14px; padding:14px; margin-bottom:20px;
+  display:flex; gap:10px; align-items:flex-start;
+}
+.ts-note-icon { font-size:20px; flex-shrink:0; }
+.ts-note-text { font-size:13px; color:var(--text2); line-height:1.6; }
+.table-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:24px; }
+.tbl-btn {
+  aspect-ratio:1; border-radius:16px;
+  background:var(--white); border:1.5px solid var(--paper2);
+  color:var(--text3); font-size:16px; font-weight:700;
+  cursor:pointer; transition:all 0.2s;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:2px;
+  box-shadow:0 2px 8px var(--shadow2);
+}
+.tbl-btn:hover { border-color:var(--brown3); color:var(--brown2); }
+.tbl-btn.sel {
+  background:var(--brown1); border-color:var(--brown1);
+  color:var(--caramel); transform:scale(1.06);
+  box-shadow:0 6px 20px rgba(60,30,10,0.25);
+}
+.tbl-icon { font-size:12px; opacity:0.6; }
+.proceed-btn {
+  width:100%; padding:16px; border-radius:16px;
+  background:var(--brown1); border:none; color:var(--latte);
+  font-family:'Playfair Display', serif; font-size:17px; font-weight:700;
+  cursor:pointer; transition:all 0.25s; letter-spacing:0.5px;
+  box-shadow:0 6px 24px rgba(60,30,10,0.2);
+}
+.proceed-btn:disabled { opacity:0.4; cursor:not-allowed; }
+.proceed-btn:not(:disabled):hover { background:var(--brown2); transform:translateY(-2px); }
+
+/* ══════════════════════════════════════════
+   MAIN CHATBOT SCREEN
+══════════════════════════════════════════ */
+#chatApp {
+  height:100vh; display:none; flex-direction:column;
+  background:var(--cream);
+}
+#chatApp.flex { display:flex; }
+
+/* TOP BAR */
+.app-topbar {
+  background:var(--white);
+  border-bottom:1px solid var(--paper2);
+  padding:12px 16px;
+  display:flex; align-items:center; gap:10px;
+  box-shadow:0 2px 12px var(--shadow2);
+  flex-shrink:0;
+}
+.app-logo {
+  font-family:'Playfair Display', serif;
+  font-size:18px; font-weight:700; color:var(--brown1); flex:1;
+}
+.app-table-chip {
+  background:var(--paper); border:1px solid var(--paper2);
+  color:var(--brown2); padding:5px 11px; border-radius:20px;
+  font-size:11px; font-weight:700; letter-spacing:0.5px;
+}
+.app-ai-dot {
+  width:8px; height:8px; border-radius:50%;
+  background:var(--green); animation:pulse 1.5s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+.app-lang-mini {
+  display:flex; background:var(--paper); border-radius:16px; padding:2px; gap:2px;
+}
+.alm-btn {
+  padding:4px 8px; border-radius:12px; font-size:10px; font-weight:700;
+  cursor:pointer; border:none; transition:all 0.15s;
+  font-family:'Jost', sans-serif; letter-spacing:0.5px;
+}
+.alm-btn.on { background:var(--brown1); color:var(--latte); }
+.alm-btn:not(.on) { background:transparent; color:var(--text3); }
+
+/* TABS */
+.app-tabs {
+  display:flex; background:var(--white);
+  border-bottom:1px solid var(--paper2);
+  overflow-x:auto; scrollbar-width:none; flex-shrink:0;
+}
+.app-tabs::-webkit-scrollbar { display:none; }
+.app-tab {
+  padding:10px 16px; font-size:12px; font-weight:600;
+  border-bottom:2px solid transparent; color:var(--text3);
+  cursor:pointer; white-space:nowrap; background:none; border-top:none;
+  border-left:none; border-right:none; transition:all 0.2s;
+  font-family:'Jost', sans-serif; letter-spacing:0.3px;
+}
+.app-tab.on { color:var(--brown1); border-bottom-color:var(--brown2); }
+
+/* VIEWS */
+.view { display:none; flex:1; overflow-y:auto; }
+.view.on { display:flex; flex-direction:column; }
+
+/* CHAT VIEW */
+#vChat { padding:0; }
+.messages {
+  flex:1; overflow-y:auto; padding:16px;
+  display:flex; flex-direction:column; gap:10px;
+  scrollbar-width:thin; scrollbar-color:var(--paper2) transparent;
+}
+.msg { display:flex; gap:8px; align-items:flex-end; }
+.msg.user { flex-direction:row-reverse; }
+.avatar {
+  width:28px; height:28px; border-radius:9px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:13px;
+}
+.avatar.bot { background:var(--brown1); }
+.avatar.user { background:var(--paper2); }
+.bubble {
+  max-width:80%; padding:11px 14px; border-radius:18px;
+  font-size:13.5px; line-height:1.65; white-space:pre-wrap; word-break:break-word;
+  animation:pop 0.25s ease;
+}
+@keyframes pop { from{opacity:0;transform:scale(0.94) translateY(6px)} to{opacity:1;transform:none} }
+.bubble.bot {
+  background:var(--white); color:var(--text);
+  border:1px solid var(--paper2); border-bottom-left-radius:4px;
+  box-shadow:0 2px 10px var(--shadow2);
+}
+.bubble.user {
+  background:var(--brown1); color:var(--latte);
+  border-bottom-right-radius:4px;
+}
+.typing {
+  display:none; align-items:center; gap:5px;
+  padding:12px 14px; background:var(--white);
+  border:1px solid var(--paper2); border-radius:18px; border-bottom-left-radius:4px;
+  box-shadow:0 2px 10px var(--shadow2); width:fit-content;
+}
+.typing.show { display:flex; }
+.td { width:7px; height:7px; border-radius:50%; background:var(--brown3); animation:td 1.2s infinite; }
+.td:nth-child(2){animation-delay:.2s} .td:nth-child(3){animation-delay:.4s}
+@keyframes td { 0%,60%,100%{transform:translateY(0);opacity:0.35} 30%{transform:translateY(-6px);opacity:1} }
+
+/* INPUT BAR */
+.input-bar {
+  background:var(--white); border-top:1px solid var(--paper2);
+  padding:10px 14px; flex-shrink:0;
+}
+.quick-row {
+  display:flex; gap:6px; overflow-x:auto; margin-bottom:8px;
+  scrollbar-width:none; padding-bottom:1px;
+}
+.quick-row::-webkit-scrollbar { display:none; }
+.qchip {
+  white-space:nowrap; padding:6px 13px; border-radius:20px;
+  background:var(--paper); border:1px solid var(--paper2);
+  color:var(--brown2); font-size:11px; font-weight:600; cursor:pointer;
+  transition:all 0.15s; font-family:'Jost', sans-serif;
+  flex-shrink:0;
+}
+.qchip:hover { background:var(--paper2); }
+.input-row { display:flex; gap:8px; align-items:flex-end; }
+#msgIn {
+  flex:1; background:var(--paper); border:1.5px solid var(--paper2);
+  border-radius:14px; padding:11px 14px; color:var(--text);
+  font-family:'Jost', sans-serif; font-size:14px;
+  outline:none; resize:none; line-height:1.5;
+  min-height:44px; max-height:100px; transition:border-color 0.2s;
+}
+#msgIn:focus { border-color:var(--brown3); background:var(--white); }
+#msgIn::placeholder { color:var(--text3); }
+#sendB {
+  width:44px; height:44px; border-radius:14px; flex-shrink:0;
+  background:var(--brown1); border:none; color:var(--latte);
+  font-size:18px; cursor:pointer; transition:all 0.2s;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 14px rgba(60,30,10,0.2);
+}
+#sendB:hover { background:var(--brown2); transform:scale(1.05); }
+#sendB:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+
+/* MENU VIEW */
+#vMenu { padding:16px; overflow-y:auto; }
+.menu-sec { margin-bottom:24px; }
+.menu-sec-hd {
+  font-size:11px; letter-spacing:2.5px; text-transform:uppercase;
+  color:var(--brown3); font-weight:600; margin-bottom:12px;
+  padding-bottom:8px; border-bottom:1px solid var(--paper2);
+  display:flex; align-items:center; gap:8px;
+}
+.menu-sec-hd::before { content:''; width:16px; height:1px; background:var(--brown3); }
+.dish-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.dcard {
+  background:var(--white); border:1px solid var(--paper2);
+  border-radius:18px; overflow:hidden; cursor:pointer;
+  transition:all 0.22s; box-shadow:0 2px 8px var(--shadow2);
+}
+.dcard:hover { transform:translateY(-3px); box-shadow:0 8px 24px var(--shadow); border-color:var(--brown4); }
+.dcard:active { transform:scale(0.97); }
+.dcard-img {
+  height:100px; width:100%; overflow:hidden;
+  background:var(--paper); display:flex; align-items:center;
+  justify-content:center; font-size:42px; position:relative;
+}
+.dcard-img img { width:100%; height:100%; object-fit:cover; }
+.dcard-body { padding:10px 12px 12px; }
+.dcard-name { font-size:12px; font-weight:600; color:var(--brown1); line-height:1.3; margin-bottom:3px; }
+.dcard-price { font-size:14px; font-weight:700; color:var(--brown2); }
+.dcard-meta { display:flex; justify-content:space-between; align-items:center; margin-top:4px; }
+.dcard-time { font-size:10px; color:var(--text3); }
+.dcard-add {
+  width:24px; height:24px; border-radius:7px;
+  background:var(--paper); border:1px solid var(--paper2);
+  color:var(--brown2); font-size:17px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.15s; line-height:1;
+}
+.dcard-add:hover { background:var(--brown1); color:var(--latte); border-color:var(--brown1); }
+
+/* ORDER VIEW */
+#vOrder { padding:16px; overflow-y:auto; }
+.ocard {
+  background:var(--white); border:1px solid var(--paper2);
+  border-radius:16px; padding:16px; margin-bottom:12px;
+  box-shadow:0 2px 8px var(--shadow2);
+}
+.ocard-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.oid { font-family:'Playfair Display', serif; font-size:14px; color:var(--brown1); font-weight:700; }
+.ostatus {
+  padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700;
+}
+.os-confirmed { background:rgba(74,124,89,0.1); color:var(--green); border:1px solid rgba(74,124,89,0.25); }
+.os-cancelled { background:rgba(181,65,43,0.1); color:var(--red); border:1px solid rgba(181,65,43,0.25); }
+.otime { font-size:11px; color:var(--text3); }
+.ocancel {
+  width:100%; padding:9px; border-radius:10px; margin-top:10px;
+  background:rgba(181,65,43,0.06); border:1px solid rgba(181,65,43,0.2);
+  color:var(--red); font-size:13px; font-weight:600; cursor:pointer;
+  transition:all 0.15s; font-family:'Jost', sans-serif;
+}
+.ocancel:hover { background:rgba(181,65,43,0.12); }
+
+/* BILL VIEW */
+#vBill { padding:16px; overflow-y:auto; }
+.bill-card {
+  background:var(--white); border:1px solid var(--paper2);
+  border-radius:20px; overflow:hidden;
+  box-shadow:0 4px 20px var(--shadow);
+}
+.bill-head {
+  background:var(--brown1); padding:24px 20px; text-align:center;
+}
+.bill-logo { font-family:'Playfair Display', serif; font-size:24px; color:var(--latte); margin-bottom:4px; }
+.bill-info { font-size:11px; color:rgba(232,201,154,0.6); }
+.bill-body { padding:20px; }
+.bill-row { display:flex; justify-content:space-between; font-size:13px; padding:6px 0; }
+.bill-row.dim { color:var(--text3); }
+.bill-divider { height:1px; background:var(--paper2); margin:12px 0; }
+.bill-total { font-size:17px; font-weight:700; color:var(--brown1); }
+.pay-btn {
+  width:100%; padding:15px; border-radius:14px; margin-top:20px;
+  background:var(--brown1); border:none; color:var(--latte);
+  font-family:'Playfair Display', serif; font-size:16px; font-weight:700;
+  cursor:pointer; transition:all 0.2s; letter-spacing:0.5px;
+  box-shadow:0 4px 20px rgba(60,30,10,0.2);
+}
+.pay-btn:hover { background:var(--brown2); transform:translateY(-2px); }
+
+/* EMPTY STATE */
+.empty-state {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:10px; padding:40px 20px; text-align:center; color:var(--text3);
+}
+.empty-icon { font-size:44px; opacity:0.5; }
+
+/* CART BADGE */
+.cbadge {
+  background:var(--red); color:#fff; border-radius:50%;
+  width:16px; height:16px; font-size:10px; font-weight:700;
+  display:inline-flex; align-items:center; justify-content:center;
+  margin-left:4px; vertical-align:top;
+}
+
+/* TOAST */
+.toast {
+  position:fixed; bottom:80px; left:50%;
+  transform:translateX(-50%) translateY(16px);
+  background:var(--brown1); color:var(--latte);
+  padding:10px 20px; border-radius:30px;
+  font-size:12px; font-weight:600;
+  z-index:900; opacity:0; transition:all 0.3s;
+  white-space:nowrap; pointer-events:none;
+  box-shadow:0 4px 20px rgba(60,30,10,0.3);
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ════ SPLASH ════ -->
+<div id="splash">
+  <div class="splash-ring"><div class="splash-icon">☕</div></div>
+  <div class="splash-wordmark">CAFÉ FAMS</div>
+  <div class="splash-line"></div>
+  <div class="splash-tag">Artisan Dining Experience</div>
+</div>
+
+<!-- ════ LANDING ════ -->
+<div class="screen active" id="landing">
+  <nav class="land-nav">
+    <div class="land-logo">Café Fams</div>
+    <div class="land-nav-links">
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="landLangEN" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" id="landLangBN" onclick="setLang('bn')">বাং</button>
+      </div>
+      <button class="nav-pill outline" onclick="goAbout()" id="aboutBtn">About</button>
+      <button class="nav-pill filled" onclick="goOrder()" id="orderNowBtn">Order Now</button>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow" id="eyebrow">Fine Dining · Dhupguri</div>
+    <h1 class="hero-title" id="heroTitle">
+      Where Every<br><em>Dish Tells</em><br>a Story
+    </h1>
+    <p class="hero-desc" id="heroDesc">
+      Scan, chat with our AI, and enjoy 60+ curated dishes — from aromatic biryanis to artisan espresso. Your table, your experience.
+    </p>
+  </div>
+
+  <div class="dish-scroll-label" id="featuredLabel">FEATURED DISHES</div>
+  <div class="dish-scroll" id="dishScroll"></div>
+
+  <div class="info-strip">
+    <div class="info-chip">
+      <div class="info-chip-val">60+</div>
+      <div class="info-chip-lbl" id="lbl1">Dishes</div>
+    </div>
+    <div class="info-chip">
+      <div class="info-chip-val">16</div>
+      <div class="info-chip-lbl" id="lbl2">Tables</div>
+    </div>
+    <div class="info-chip">
+      <div class="info-chip-val">AI</div>
+      <div class="info-chip-lbl" id="lbl3">Ordering</div>
+    </div>
+  </div>
+
+  <div class="land-cta">
+    <button class="cta-main" onclick="goOrder()" id="ctaMain">Order Now → </button>
+    <button class="cta-secondary" onclick="goAbout()" id="ctaSec">Learn More About Us</button>
+  </div>
+</div>
+
+<!-- ════ ABOUT ════ -->
+<div class="screen" id="about">
+  <div class="about-hero">
+    <div class="about-back" onclick="goScreen('landing')">← <span id="backLbl">Back</span></div>
+    <h1 class="about-title">About<br>Café Fams</h1>
+    <div class="about-subtitle" id="aboutSub">Our Story & Information</div>
+  </div>
+  <div class="about-body">
+    <div class="about-section">
+      <div class="about-section-title">☕ <span id="ourStoryTitle">Our Story</span></div>
+      <p class="about-text" id="ourStoryText">
+        Café Fams was born from a simple dream — to bring world-class flavours to the heart of Dhupguri. From aromatic Indian curries to wood-fired Italian pizzas, from creamy Lebanese hummus to European classics, we craft every dish with love and the finest ingredients.
+      </p>
+    </div>
+    <div class="about-section">
+      <div class="about-section-title">📍 <span id="infoTitle">Find Us</span></div>
+      <div class="about-info-grid">
+        <div class="about-info-card">
+          <div class="about-info-icon">📍</div>
+          <div class="about-info-label" id="addrLbl">Address</div>
+          <div class="about-info-val">Falakata Road, Ward No-12, College Para, Dhupguri, WB</div>
+        </div>
+        <div class="about-info-card">
+          <div class="about-info-icon">📞</div>
+          <div class="about-info-label" id="phoneLbl">Phone</div>
+          <div class="about-info-val">+91 98845 01942</div>
+        </div>
+        <div class="about-info-card">
+          <div class="about-info-icon">✉️</div>
+          <div class="about-info-label" id="emailLbl">Email</div>
+          <div class="about-info-val">cafefam19@gmail.com</div>
+        </div>
+        <div class="about-info-card">
+          <div class="about-info-icon">🏷️</div>
+          <div class="about-info-label">GSTIN</div>
+          <div class="about-info-val">On request</div>
+        </div>
+      </div>
+    </div>
+    <div class="about-section">
+      <div class="about-section-title">🕐 <span id="hoursTitle">Opening Hours</span></div>
+      <div style="background:var(--white);border:1px solid var(--paper2);border-radius:14px;padding:4px 16px;">
+        <div class="hours-row"><span class="hours-day" id="hMF">Monday – Friday</span><span class="hours-time">11:00 AM – 10:30 PM</span></div>
+        <div class="hours-row"><span class="hours-day" id="hSS">Saturday – Sunday</span><span class="hours-time">10:00 AM – 11:00 PM</span></div>
+      </div>
+    </div>
+    <button class="cta-main" onclick="goOrder()" style="margin-top:4px" id="aboutCTA">Order Now →</button>
+  </div>
+</div>
+
+<!-- ════ TABLE SELECT ════ -->
+<div class="screen" id="tableSelect">
+  <div class="ts-header">
+    <div class="ts-back" onclick="goScreen('landing')">← <span id="tsBackLbl">Back to Home</span></div>
+    <div class="ts-headline" id="tsTitle">Choose Your Table</div>
+    <div class="ts-sub" id="tsSub">Select the number on your table</div>
+  </div>
+  <div class="ts-body">
+    <div class="ts-note">
+      <div class="ts-note-icon">💡</div>
+      <div class="ts-note-text" id="tsNote">Look for the number on your table card. Each table has a unique number from 1 to 16.</div>
+    </div>
+    <div class="table-grid" id="tableGrid"></div>
+    <button class="proceed-btn" id="proceedBtn" disabled onclick="startChat()" id="proceedBtnLbl">Proceed to Order</button>
+  </div>
+</div>
+
+<!-- ════ CHAT APP ════ -->
+<div id="chatApp">
+  <div class="app-topbar">
+    <div class="app-logo">Café Fams</div>
+    <div class="app-table-chip" id="tableChip">T–</div>
+    <div class="app-ai-dot"></div>
+    <div class="app-lang-mini">
+      <button class="alm-btn on" id="appLangEN" onclick="setLang('en')">EN</button>
+      <button class="alm-btn" id="appLangBN" onclick="setLang('bn')">বাং</button>
+    </div>
+  </div>
+  <div class="app-tabs">
+    <button class="app-tab on" onclick="showView('chat',this)" id="tabChat">💬 Chat</button>
+    <button class="app-tab" onclick="showView('menu',this)" id="tabMenu">🍽️ Menu</button>
+    <button class="app-tab" onclick="showView('order',this)" id="tabOrder">📋 Orders <span class="cbadge" id="ocnt">0</span></button>
+    <button class="app-tab" onclick="showView('bill',this)" id="tabBill">🧾 Bill</button>
+  </div>
+
+  <!-- CHAT -->
+  <div class="view on" id="vChat">
+    <div class="messages" id="msgs">
+      <div class="msg"><div class="avatar bot">☕</div><div class="bubble bot" id="welcomeBubble"></div></div>
+      <div class="msg"><div class="avatar bot">☕</div><div class="typing" id="typin"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>
+    </div>
+    <div class="input-bar">
+      <div class="quick-row" id="quickRow"></div>
+      <div class="input-row">
+        <textarea id="msgIn" rows="1" placeholder="Type your order..."></textarea>
+        <button id="sendB" onclick="sendMsg()">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU -->
+  <div class="view" id="vMenu"></div>
+
+  <!-- ORDERS -->
+  <div class="view" id="vOrder">
+    <div class="empty-state" id="orderEmpty">
+      <div class="empty-icon">📋</div>
+      <div id="orderEmptyTxt">No orders yet. Chat to order!</div>
+    </div>
+    <div id="orderList"></div>
+  </div>
+
+  <!-- BILL -->
+  <div class="view" id="vBill">
+    <div style="padding:16px" id="billInner">
+      <div class="empty-state">
+        <div class="empty-icon">🧾</div>
+        <div id="billEmptyTxt">Type "bill" in chat to see your total.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- RAZORPAY -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+// ══════════════════════════════════════════════════
+//  CONFIG — Railway URL এখানে পাল্টাও
+// ══════════════════════════════════════════════════
+const BACKEND = 'https://cafefams-backend-production.up.railway.app';
+
+// ══════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════
+let lang = 'en';
+let table = null;
+let history = [];
+let orders = [];
+let sid = 'S' + Date.now();
+
+// ══════════════════════════════════════════════════
+//  I18N
+// ══════════════════════════════════════════════════
+const T = {
+  en:{
+    eyebrow:'Fine Dining · Dhupguri',
+    heroTitle:'Where Every\nDish Tells\na Story',
+    heroDesc:'Scan, chat with our AI, and enjoy 60+ curated dishes — from aromatic biryanis to artisan espresso.',
+    featuredLabel:'FEATURED DISHES',
+    lbl1:'Dishes', lbl2:'Tables', lbl3:'AI Ordering',
+    ctaMain:'Order Now →', ctaSec:'Learn More About Us',
+    aboutBtn:'About', orderNowBtn:'Order Now',
+    backLbl:'Back', aboutSub:'Our Story & Information',
+    ourStoryTitle:'Our Story',
+    ourStoryText:'Café Fams was born from a simple dream — to bring world-class flavours to the heart of Dhupguri. From aromatic Indian curries to wood-fired Italian pizzas, from creamy Lebanese hummus to European classics, we craft every dish with love.',
+    infoTitle:'Find Us', addrLbl:'Address', phoneLbl:'Phone', emailLbl:'Email',
+    hoursTitle:'Opening Hours', hMF:'Monday – Friday', hSS:'Saturday – Sunday',
+    aboutCTA:'Order Now →',
+    tsBackLbl:'Back to Home', tsTitle:'Choose Your Table',
+    tsSub:'Select the number on your table',
+    tsNote:'Look for the number on your table card.',
+    proceedBtnLbl:'Proceed to Order',
+    tabChat:'💬 Chat', tabMenu:'🍽️ Menu', tabOrder:'📋 Orders', tabBill:'🧾 Bill',
+    orderEmptyTxt:'No orders yet. Chat to order!',
+    billEmptyTxt:'Type "bill" in chat to see your total.',
+    welcomeMsg: (t) => `Welcome to Café Fams! 🙏\n\nYou're at Table ${t}. I'm Fams, your AI assistant.\n\nWhat would you like to order today? You can browse our menu tab or just type freely!\n\n✨ Try: "Show me the menu" or "I'd like a coffee"`,
+    quickBtns:['🍽️ Show Menu','☕ Coffees','🍕 Pizza','🍛 Biryani','🧾 My Bill','❌ Cancel Order'],
+  },
+  bn:{
+    eyebrow:'ফাইন ডাইনিং · ধুপগুড়ি',
+    heroTitle:'যেখানে প্রতিটি\nখাবারের\nগল্প আছে',
+    heroDesc:'QR স্ক্যান করুন, AI-এর সাথে কথা বলুন এবং ৬০+ পদের মধ্যে বেছে নিন — বিরিয়ানি থেকে এস্প্রেসো পর্যন্ত।',
+    featuredLabel:'বিশেষ পদসমূহ',
+    lbl1:'পদ', lbl2:'টেবিল', lbl3:'AI অর্ডার',
+    ctaMain:'অর্ডার করুন →', ctaSec:'আমাদের সম্পর্কে জানুন',
+    aboutBtn:'পরিচিতি', orderNowBtn:'অর্ডার করুন',
+    backLbl:'ফিরে যান', aboutSub:'আমাদের গল্প ও তথ্য',
+    ourStoryTitle:'আমাদের গল্প',
+    ourStoryText:'Café Fams জন্ম নিয়েছে একটা সহজ স্বপ্ন থেকে — ধুপগুড়ির মানুষদের কাছে বিশ্বমানের খাবার পৌঁছে দেওয়া। সুগন্ধি বিরিয়ানি থেকে ইতালিয়ান পিৎজা, আরবিয়ান হুমাস থেকে ইউরোপিয়ান ক্লাসিক — প্রতিটি পদ তৈরি হয় ভালোবাসা দিয়ে।',
+    infoTitle:'আমাদের খুঁজুন', addrLbl:'ঠিকানা', phoneLbl:'ফোন', emailLbl:'ইমেইল',
+    hoursTitle:'খোলার সময়', hMF:'সোমবার – শুক্রবার', hSS:'শনিবার – রবিবার',
+    aboutCTA:'অর্ডার করুন →',
+    tsBackLbl:'হোমে ফিরুন', tsTitle:'আপনার টেবিল বেছে নিন',
+    tsSub:'আপনার টেবিলে লেখা নম্বরটি বেছে নিন',
+    tsNote:'আপনার টেবিলে নম্বর লেখা কার্ড আছে। ১ থেকে ১৬-র মধ্যে বেছে নিন।',
+    proceedBtnLbl:'অর্ডার করতে যান',
+    tabChat:'💬 চ্যাট', tabMenu:'🍽️ মেনু', tabOrder:'📋 অর্ডার', tabBill:'🧾 বিল',
+    orderEmptyTxt:'এখনো অর্ডার নেই। চ্যাটে অর্ডার করুন!',
+    billEmptyTxt:'বিল দেখতে চ্যাটে "বিল দাও" লিখুন।',
+    welcomeMsg: (t) => `Café Fams-এ আপনাকে স্বাগতম! 🙏\n\nআপনি Table ${t}-এ আছেন। আমি Fams — আপনার AI assistant।\n\nআজ কী খাবেন বলুন! Menu tab দেখতে পারেন বা সরাসরি টাইপ করুন।\n\n✨ লিখুন: "মেনু দেখাও" বা "একটা কফি দাও"`,
+    quickBtns:['🍽️ মেনু দেখাও','☕ কফি','🍕 পিৎজা','🍛 বিরিয়ানি','🧾 বিল দাও','❌ অর্ডার বাতিল'],
+  }
+};
+
+function t(k){ return T[lang][k] || T.en[k] || k; }
+
+// ══════════════════════════════════════════════════
+//  FEATURED DISHES DATA (with emoji as image fallback)
+// ══════════════════════════════════════════════════
+const FEATURED = [
+  {name:'Chicken Biryani', price:280, cat:'Indian', emoji:'🍗', img:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=280&q=80'},
+  {name:'Margherita Pizza', price:280, cat:'Italian', emoji:'🍕', img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=280&q=80'},
+  {name:'Café Latte', price:120, cat:'Coffee', emoji:'☕', img:'https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=280&q=80'},
+  {name:'Chicken Shawarma', price:180, cat:'Arabian', emoji:'🌯', img:'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=280&q=80'},
+  {name:'Beef Burger', price:260, cat:'European', emoji:'🍔', img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=280&q=80'},
+  {name:'Pasta Alfredo', price:240, cat:'Italian', emoji:'🍝', img:'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=280&q=80'},
+];
+
+const MENU_DATA = {
+  'Coffee & Tea':[
+    {id:'CT01',name:'Espresso',price:80,time:'3 min',emoji:'☕',img:'https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=200&q=80'},
+    {id:'CT02',name:'Café Latte',price:120,time:'5 min',emoji:'🥛',img:'https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=200&q=80'},
+    {id:'CT03',name:'Cappuccino',price:110,time:'5 min',emoji:'☕',img:'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=200&q=80'},
+    {id:'CT04',name:'Cold Coffee',price:130,time:'5 min',emoji:'🧊',img:'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=200&q=80'},
+    {id:'CT05',name:'Masala Chai',price:40,time:'4 min',emoji:'🍵',img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&q=80'},
+    {id:'CT06',name:'Mango Smoothie',price:150,time:'5 min',emoji:'🥭',img:'https://images.unsplash.com/photo-1542444459-b6f7c2b37c5e?w=200&q=80'},
+  ],
+  'Indian':[
+    {id:'IN01',name:'Paneer Butter Masala',price:220,time:'15 min',emoji:'🧆',img:'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=200&q=80'},
+    {id:'IN02',name:'Dal Tadka',price:130,time:'12 min',emoji:'🍲',img:'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=200&q=80'},
+    {id:'IN03',name:'Chicken Curry',price:260,time:'20 min',emoji:'🍛',img:'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=200&q=80'},
+    {id:'IN04',name:'Veg Biryani',price:200,time:'20 min',emoji:'🍚',img:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=200&q=80'},
+    {id:'IN05',name:'Chicken Biryani',price:280,time:'25 min',emoji:'🍗',img:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=200&q=80'},
+    {id:'IN06',name:'Aloo Paratha',price:100,time:'10 min',emoji:'🫓',img:'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=200&q=80'},
+    {id:'IN07',name:'Samosa (2 pcs)',price:50,time:'5 min',emoji:'🥟',img:'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=200&q=80'},
+    {id:'IN08',name:'Pav Bhaji',price:140,time:'12 min',emoji:'🍞',img:'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=200&q=80'},
+  ],
+  'Italian':[
+    {id:'IT01',name:'Margherita Pizza',price:280,time:'20 min',emoji:'🍕',img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=200&q=80'},
+    {id:'IT02',name:'Pepperoni Pizza',price:350,time:'20 min',emoji:'🍕',img:'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=200&q=80'},
+    {id:'IT03',name:'Pasta Arrabbiata',price:220,time:'15 min',emoji:'🍝',img:'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=200&q=80'},
+    {id:'IT04',name:'Pasta Alfredo',price:240,time:'15 min',emoji:'🍝',img:'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=200&q=80'},
+    {id:'IT05',name:'Chicken Lasagna',price:320,time:'25 min',emoji:'🥘',img:'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=200&q=80'},
+    {id:'IT06',name:'Tiramisu',price:180,time:'5 min',emoji:'🍰',img:'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=200&q=80'},
+  ],
+  'Arabian':[
+    {id:'AR01',name:'Chicken Shawarma',price:180,time:'10 min',emoji:'🌯',img:'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=200&q=80'},
+    {id:'AR02',name:'Beef Shawarma',price:220,time:'10 min',emoji:'🌯',img:'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=200&q=80'},
+    {id:'AR03',name:'Falafel Wrap',price:150,time:'10 min',emoji:'🧆',img:'https://images.unsplash.com/photo-1554998171-89445e31c52a?w=200&q=80'},
+    {id:'AR04',name:'Hummus Platter',price:140,time:'5 min',emoji:'🫙',img:'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=200&q=80'},
+    {id:'AR05',name:'Lamb Kebab',price:320,time:'20 min',emoji:'🍢',img:'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=200&q=80'},
+  ],
+  'European':[
+    {id:'EU01',name:'Club Sandwich',price:200,time:'10 min',emoji:'🥪',img:'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=200&q=80'},
+    {id:'EU02',name:'Grilled Chicken',price:300,time:'20 min',emoji:'🍗',img:'https://images.unsplash.com/photo-1432139509613-5c4255815697?w=200&q=80'},
+    {id:'EU03',name:'Fish & Chips',price:280,time:'18 min',emoji:'🐟',img:'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=200&q=80'},
+    {id:'EU04',name:'Caesar Salad',price:160,time:'8 min',emoji:'🥗',img:'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=200&q=80'},
+    {id:'EU05',name:'Beef Burger',price:260,time:'15 min',emoji:'🍔',img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&q=80'},
+    {id:'EU06',name:'Chocolate Brownie',price:120,time:'5 min',emoji:'🍫',img:'https://images.unsplash.com/photo-1564355808539-22fda35bed7e?w=200&q=80'},
+    {id:'EU07',name:'Cheesecake',price:160,time:'5 min',emoji:'🍰',img:'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=200&q=80'},
+  ]
+};
+
+// ══════════════════════════════════════════════════
+//  SPLASH
+// ══════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  buildFeatured();
+  buildTableGrid();
+  buildMenu();
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('out');
+  }, 2000);
+});
+
+// ══════════════════════════════════════════════════
+//  LANG
+// ══════════════════════════════════════════════════
+function setLang(l) {
+  lang = l;
+  ['landLangEN','appLangEN'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.toggle('on', l==='en');
+    if(el) el.classList.toggle('active', l==='en');
+  });
+  ['landLangBN','appLangBN'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.toggle('on', l==='bn');
+    if(el) el.classList.toggle('active', l==='bn');
+  });
+  document.body.classList.toggle('bn', l==='bn');
+  applyLang();
+}
+
+function applyLang() {
+  const keys = ['eyebrow','heroDesc','featuredLabel','lbl1','lbl2','lbl3','ctaMain','ctaSec',
+    'aboutBtn','orderNowBtn','backLbl','aboutSub','ourStoryTitle','ourStoryText','infoTitle',
+    'addrLbl','phoneLbl','emailLbl','hoursTitle','hMF','hSS','aboutCTA','tsBackLbl','tsTitle',
+    'tsSub','tsNote','orderEmptyTxt','billEmptyTxt'];
+  keys.forEach(k => {
+    const el = document.getElementById(k);
+    if(el) el.textContent = t(k);
+  });
+  // heroTitle has italic
+  const ht = document.getElementById('heroTitle');
+  if(ht) {
+    const lines = t('heroTitle').split('\n');
+    if(lang==='en') ht.innerHTML = `${lines[0]}<br><em>${lines[1]}</em><br>${lines[2]}`;
+    else ht.innerHTML = lines.join('<br>');
+  }
+  // quick buttons
+  buildQuickBtns();
+  // proceed btn
+  const pb = document.getElementById('proceedBtn');
+  if(pb) pb.textContent = t('proceedBtnLbl');
+  // welcome bubble (if chat open)
+  if(table) {
+    const wb = document.getElementById('welcomeBubble');
+    if(wb && wb.dataset.isWelcome) wb.textContent = t('welcomeMsg')(table);
+  }
+  // msgIn placeholder
+  const mi = document.getElementById('msgIn');
+  if(mi) mi.placeholder = lang==='en' ? 'Type your order...' : 'অর্ডার বা প্রশ্ন লিখুন...';
+}
+
+// ══════════════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════════════
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goAbout() { goScreen('about'); }
+function goOrder() { goScreen('tableSelect'); }
+
+// ══════════════════════════════════════════════════
+//  FEATURED DISHES
+// ══════════════════════════════════════════════════
+function buildFeatured() {
+  const el = document.getElementById('dishScroll');
+  el.innerHTML = FEATURED.map(d => `
+    <div class="dish-card" onclick="goOrder()">
+      <div class="dish-card-img">
+        <img src="${d.img}" alt="${d.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy">
+        <div style="display:none;align-items:center;justify-content:center;height:100%;font-size:48px">${d.emoji}</div>
+      </div>
+      <div class="dish-card-body">
+        <div class="dish-card-name">${d.name}</div>
+        <div class="dish-card-price">₹${d.price}</div>
+        <div class="dish-card-cat">${d.cat}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════
+//  TABLE GRID
+// ══════════════════════════════════════════════════
+function buildTableGrid() {
+  const g = document.getElementById('tableGrid');
+  for(let i=1;i<=16;i++){
+    const b = document.createElement('button');
+    b.className='tbl-btn'; b.dataset.n=i;
+    b.innerHTML=`<span>${i}</span><span class="tbl-icon">🪑</span>`;
+    b.onclick=()=>selectTable(i,b);
+    g.appendChild(b);
+  }
+}
+function selectTable(n,btn){
+  document.querySelectorAll('.tbl-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel'); table=n;
+  document.getElementById('proceedBtn').disabled=false;
+}
+function startChat(){
+  if(!table) return;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const app = document.getElementById('chatApp');
+  app.classList.add('flex');
+  document.getElementById('tableChip').textContent='Table '+table;
+  const wb = document.getElementById('welcomeBubble');
+  wb.textContent = t('welcomeMsg')(table);
+  wb.dataset.isWelcome = '1';
+  buildQuickBtns();
+  loadMenuView();
+}
+
+// ══════════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════════
+function showView(v, btn){
+  document.querySelectorAll('.view').forEach(el=>{el.classList.remove('on');});
+  document.querySelectorAll('.app-tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('v'+v[0].toUpperCase()+v.slice(1)).classList.add('on');
+  btn.classList.add('on');
+  if(v==='bill') buildBillView();
+}
+
+// ══════════════════════════════════════════════════
+//  MENU
+// ══════════════════════════════════════════════════
+function buildMenu(){}
+function loadMenuView(){
+  const el = document.getElementById('vMenu');
+  let html='';
+  Object.entries(MENU_DATA).forEach(([sec,items])=>{
+    html+=`<div class="menu-sec" style="padding:16px 16px 0">
+      <div class="menu-sec-hd">${sec}</div>
+      <div class="dish-grid">`;
+    items.forEach(item=>{
+      html+=`<div class="dcard" onclick="addFromMenu('${item.name.replace(/'/g,"\\'")}',${item.price})">
+        <div class="dcard-img">
+          <img src="${item.img}" alt="${item.name}" onerror="this.style.display='none';this.parentElement.querySelector('.efb').style.display='flex'" loading="lazy">
+          <div class="efb" style="display:none;align-items:center;justify-content:center;height:100%;font-size:42px;background:var(--paper)">${item.emoji}</div>
+        </div>
+        <div class="dcard-body">
+          <div class="dcard-name">${item.name}</div>
+          <div class="dcard-meta">
+            <div class="dcard-price">₹${item.price}</div>
+            <div class="dcard-add">+</div>
+          </div>
+          <div class="dcard-time">⏱ ${item.time}</div>
+        </div>
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+  html+='<div style="height:16px"></div>';
+  el.innerHTML=html;
+}
+function addFromMenu(name,price){
+  document.querySelectorAll('.app-tab')[0].click();
+  document.getElementById('msgIn').value = lang==='en'?`I'd like one ${name}`:`${name} একটা দিন`;
+  document.getElementById('msgIn').focus();
+  toast(`✓ ${name} · ₹${price}`);
+}
+
+// ══════════════════════════════════════════════════
+//  QUICK BTNS
+// ══════════════════════════════════════════════════
+function buildQuickBtns(){
+  const qr = document.getElementById('quickRow');
+  if(!qr) return;
+  qr.innerHTML = t('quickBtns').map(b=>`<button class="qchip" onclick="quickSend('${b.replace(/'/g,"\\'")}')">${b}</button>`).join('');
+}
+function quickSend(txt){
+  document.querySelectorAll('.app-tab')[0].click();
+  document.getElementById('msgIn').value=txt;
+  sendMsg();
+}
+
+// ══════════════════════════════════════════════════
+//  CHAT
+// ══════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  const mi=document.getElementById('msgIn');
+  if(!mi) return;
+  mi.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
+  mi.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px';});
+});
+
+async function sendMsg(){
+  const mi=document.getElementById('msgIn');
+  const msg=mi.value.trim(); if(!msg) return;
+  mi.value=''; mi.style.height='44px';
+  document.getElementById('sendB').disabled=true;
+  addBubble(msg,'user');
+  history.push({role:'user',content:msg});
+  showTyping(true);
+  try{
+    const res=await fetch(`${BACKEND}/api/chat`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:msg,history:history.slice(-10),tableNumber:table,sessionId:sid,lang})
+    });
+    const data=await res.json();
+    showTyping(false);
+    const reply=data.reply||(`⚠️ ${data.error||'Sorry, something went wrong.'}${data.detail?('\n\nDetail: '+JSON.stringify(data.detail).slice(0,200)):''}`);
+    addBubble(reply,'bot');
+    history.push({role:'model',content:reply});
+    if(data.orderId){
+      orders.push({id:data.orderId,msg,time:new Date(),status:'confirmed'});
+      document.getElementById('ocnt').textContent=orders.length;
+      buildOrderView();
+    }
+  }catch(e){
+    showTyping(false);
+    addBubble(`⚠️ Connection failed!\n\nCheck backend URL:\n${BACKEND}\n\nError: ${e.message}`,'bot');
+  }
+  document.getElementById('sendB').disabled=false;
+}
+
+function addBubble(text,role){
+  const msgs=document.getElementById('msgs');
+  const d=document.createElement('div');
+  d.className='msg '+role;
+  d.innerHTML=`<div class="avatar ${role}">${role==='bot'?'☕':'👤'}</div><div class="bubble ${role}">${text}</div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+function showTyping(show){
+  document.getElementById('typin').classList.toggle('show',show);
+  const m=document.getElementById('msgs'); m.scrollTop=m.scrollHeight;
+}
+
+// ══════════════════════════════════════════════════
+//  ORDERS
+// ══════════════════════════════════════════════════
+function buildOrderView(){
+  const el=document.getElementById('orderList');
+  const emp=document.getElementById('orderEmpty');
+  if(!orders.length){emp.style.display='flex';el.innerHTML='';return;}
+  emp.style.display='none';
+  el.innerHTML='<div style="padding:16px">'+orders.map(o=>`
+    <div class="ocard" id="oc-${o.id}">
+      <div class="ocard-top">
+        <div class="oid">${o.id}</div>
+        <div class="ostatus ${o.status==='confirmed'?'os-confirmed':'os-cancelled'}">
+          ${o.status==='confirmed'?'✓ Confirmed':'✗ Cancelled'}
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--text2)">${o.msg}</div>
+      <div class="otime">${new Date(o.time).toLocaleTimeString()}</div>
+      ${o.status==='confirmed'?`<button class="ocancel" onclick="cancelOrder('${o.id}')">✕ Cancel Order</button>`:''}
+    </div>`).join('')+'</div>';
+}
+async function cancelOrder(id){
+  if(!confirm(`Cancel order ${id}?`)) return;
+  try{
+    const r=await fetch(`${BACKEND}/api/cancel`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({orderId:id,tableNumber:table})});
+    const d=await r.json();
+    toast(d.message);
+    if(d.success){const o=orders.find(x=>x.id===id);if(o)o.status='cancelled';buildOrderView();}
+  }catch(e){toast('❌ Cancel failed');}
+}
+
+// ══════════════════════════════════════════════════
+//  BILL
+// ══════════════════════════════════════════════════
+function buildBillView(){
+  const confirmed=orders.filter(o=>o.status==='confirmed');
+  if(!confirmed.length){
+    document.getElementById('billInner').innerHTML=`<div class="empty-state"><div class="empty-icon">🧾</div><div>${t('billEmptyTxt')}</div></div>`;
+    return;
+  }
+  document.getElementById('billInner').innerHTML=`
+    <div class="bill-card">
+      <div class="bill-head">
+        <div class="bill-logo">CAFÉ FAMS</div>
+        <div class="bill-info">Table ${table} · ${new Date().toLocaleString()}</div>
+      </div>
+      <div class="bill-body">
+        ${confirmed.map(o=>`<div class="bill-row dim"><span>${o.id}</span><span style="font-size:11px;max-width:55%;text-align:right">${o.msg.substring(0,28)}…</span></div>`).join('')}
+        <div class="bill-divider"></div>
+        <div class="bill-row dim"><span>Subtotal</span><span>AI-calculated</span></div>
+        <div class="bill-row dim"><span>GST (5%)</span><span>Included</span></div>
+        <div class="bill-divider"></div>
+        <div class="bill-row bill-total"><span>Total</span><span>Type "bill" in chat</span></div>
+        <button class="pay-btn" onclick="startPayment()">💳 Pay via UPI</button>
+      </div>
+    </div>`;
+}
+async function startPayment(){
+  try{
+    const r=await fetch(`${BACKEND}/api/payment/create`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({amount:100,tableNumber:table,orderId:orders[0]?.id})});
+    const d=await r.json();
+    if(!d.success){toast('Payment setup failed');return;}
+    new Razorpay({
+      key:d.key, amount:d.order.amount, currency:'INR',
+      name:'Café Fams', description:`Table ${table} Bill`,
+      order_id:d.order.id,
+      theme:{color:'#3D2314'},
+      handler:async(resp)=>{
+        await fetch(`${BACKEND}/api/payment/verify`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...resp,tableNumber:table})});
+        toast('✅ Payment successful! Thank you!');
+      }
+    }).open();
+  }catch(e){toast('❌ '+e.message);}
+}
+
+// ══════════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════════
+function toast(msg,dur=3000){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+</script>
+</body>
+</html>
