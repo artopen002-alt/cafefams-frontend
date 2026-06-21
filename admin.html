@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Café Fams — Control Room</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B0D10;--ink2:#12151B;--card:#161A22;--card2:#1C212B;
+  --line:rgba(255,255,255,0.07);--line2:rgba(255,255,255,0.12);
+  --text:#E7E9ED;--dim:#8B93A1;--dim2:#5C6472;
+  --brass:#D4A24A;--brass-d:#A87D32;
+  --amber:#D4A24A;--blue:#4FA3D1;--green:#3FB67F;--grey:#5A6270;--red:#D1574F;
+  --shadow:0 8px 28px rgba(0,0,0,0.35);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{
+  font-family:'Inter',sans-serif;background:var(--ink);color:var(--text);
+  min-height:100vh;
+}
+.mono{font-family:'JetBrains Mono',monospace;}
+.disp{font-family:'Space Grotesk',sans-serif;}
+::selection{background:var(--brass);color:var(--ink);}
+
+/* ════ LOGIN ════ */
+#loginScreen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:24px;background:radial-gradient(ellipse at top,#161A22 0%,#0B0D10 60%);
+}
+.login-card{width:100%;max-width:360px;}
+.login-mark{display:flex;align-items:center;gap:10px;margin-bottom:32px;}
+.login-mark-icon{
+  width:40px;height:40px;border-radius:10px;background:var(--brass);
+  display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--ink);
+}
+.login-mark-text{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;}
+.login-mark-sub{font-size:11px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;}
+.login-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;margin-bottom:6px;}
+.login-sub{color:var(--dim);font-size:13px;margin-bottom:28px;}
+.login-field{margin-bottom:14px;}
+.login-input{
+  width:100%;background:var(--card);border:1.5px solid var(--line2);border-radius:12px;
+  padding:14px 16px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:15px;
+  outline:none;transition:border-color .15s;letter-spacing:1px;
+}
+.login-input:focus{border-color:var(--brass);}
+.login-btn{
+  width:100%;padding:14px;border-radius:12px;background:var(--brass);border:none;
+  color:var(--ink);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;
+  cursor:pointer;transition:all .15s;margin-top:6px;
+}
+.login-btn:hover{background:#E5B45D;}
+.login-err{color:var(--red);font-size:12px;margin-top:10px;display:none;}
+.login-err.show{display:block;}
+
+/* ════ APP SHELL ════ */
+#app{display:none;min-height:100vh;flex-direction:column;}
+#app.on{display:flex;}
+.topbar{
+  background:var(--ink2);border-bottom:1px solid var(--line);
+  padding:14px 18px;display:flex;align-items:center;gap:12px;
+  position:sticky;top:0;z-index:50;
+}
+.tb-mark{display:flex;align-items:center;gap:9px;flex:1;min-width:0;}
+.tb-icon{width:30px;height:30px;border-radius:8px;background:var(--brass);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--ink);flex-shrink:0;}
+.tb-text{min-width:0;}
+.tb-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;line-height:1.2;}
+.tb-clock{font-size:10px;color:var(--dim);font-family:'JetBrains Mono',monospace;}
+.tb-live{display:flex;align-items:center;gap:5px;background:rgba(63,182,127,0.1);border:1px solid rgba(63,182,127,0.25);padding:5px 10px;border-radius:20px;font-size:10px;color:var(--green);font-weight:600;flex-shrink:0;}
+.tb-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.6s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tb-logout{
+  background:transparent;border:1px solid var(--line2);color:var(--dim);
+  padding:7px 12px;border-radius:9px;font-size:11px;cursor:pointer;font-family:'Inter';flex-shrink:0;
+}
+.tb-logout:hover{border-color:var(--red);color:var(--red);}
+
+.tabs{display:flex;background:var(--ink2);border-bottom:1px solid var(--line);padding:0 14px;gap:4px;overflow-x:auto;}
+.tabbtn{
+  padding:12px 14px;font-size:12.5px;font-weight:600;color:var(--dim);
+  background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;
+  white-space:nowrap;font-family:'Inter';transition:all .15s;display:flex;align-items:center;gap:6px;
+}
+.tabbtn.on{color:var(--brass);border-bottom-color:var(--brass);}
+.tab-badge{background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;}
+
+.content{flex:1;padding:16px;max-width:680px;width:100%;margin:0 auto;}
+.view{display:none;}
+.view.on{display:block;}
+
+/* ════ SECTION HEADER ════ */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sec-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.5px;color:var(--dim);text-transform:uppercase;display:flex;align-items:center;gap:8px;}
+.sec-count{background:var(--card2);color:var(--text);font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;}
+.refresh-btn{background:var(--card);border:1px solid var(--line2);color:var(--dim);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
+
+/* ════ ORDER TICKET CARDS ════ */
+.tickets{display:flex;flex-direction:column;gap:12px;margin-bottom:24px;}
+.ticket{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  overflow:hidden;box-shadow:var(--shadow);position:relative;
+}
+.ticket.fresh{animation:flashin .9s ease;}
+@keyframes flashin{0%{box-shadow:0 0 0 2px var(--brass),var(--shadow);}100%{box-shadow:var(--shadow);}}
+@media(prefers-reduced-motion:reduce){.ticket.fresh{animation:none;}}
+.ticket-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 15px;border-bottom:1px dashed var(--line2);
+}
+.ticket-id{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--brass);}
+.ticket-time{font-size:10.5px;color:var(--dim2);font-family:'JetBrains Mono',monospace;}
+.ticket-table{
+  background:var(--card2);padding:3px 9px;border-radius:7px;font-size:11px;font-weight:700;color:var(--text);
+}
+.ticket-body{padding:13px 15px;}
+.ticket-guest{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.guest-name{font-weight:700;font-size:14px;}
+.guest-meta{font-size:11px;color:var(--dim);display:flex;align-items:center;gap:4px;}
+.ticket-items{margin-bottom:10px;}
+.titem{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:var(--text);}
+.titem-name{color:var(--text);}
+.titem-amt{font-family:'JetBrains Mono',monospace;color:var(--dim);}
+.ticket-note{
+  background:rgba(212,162,74,0.08);border:1px solid rgba(212,162,74,0.25);
+  border-radius:8px;padding:8px 10px;font-size:12px;color:var(--brass);margin-bottom:10px;
+  display:flex;gap:6px;align-items:flex-start;
+}
+.ticket-totals{border-top:1px dashed var(--line2);padding-top:9px;margin-top:4px;}
+.trow{display:flex;justify-content:space-between;font-size:12px;color:var(--dim);padding:2px 0;}
+.trow.grand{font-size:15px;font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace;margin-top:4px;}
+.disc-tag{color:var(--green);font-size:11px;}
+
+/* Stepper */
+.stepper{display:flex;gap:4px;padding:0 15px 13px;}
+.step{
+  flex:1;padding:8px 4px;text-align:center;font-size:10px;font-weight:700;
+  border-radius:8px;cursor:pointer;transition:all .15s;letter-spacing:0.3px;
+  background:var(--card2);color:var(--dim2);text-transform:uppercase;
+}
+.step.active.pending{background:rgba(212,162,74,0.18);color:var(--amber);}
+.step.active.preparing{background:rgba(79,163,209,0.18);color:var(--blue);}
+.step.active.ready{background:rgba(63,182,127,0.18);color:var(--green);}
+.step.active.served{background:rgba(90,98,112,0.25);color:#fff;}
+.cancelled-ribbon{
+  margin:0 15px 13px;padding:8px 12px;background:rgba(209,87,79,0.1);
+  border:1px solid rgba(209,87,79,0.3);border-radius:8px;color:var(--red);
+  font-size:11px;font-weight:700;text-align:center;letter-spacing:0.5px;
+}
+
+/* Discount mini form */
+.disc-toggle{
+  margin:0 15px 13px;background:none;border:1px dashed var(--line2);color:var(--dim);
+  padding:8px;border-radius:8px;font-size:11px;cursor:pointer;width:calc(100% - 30px);font-family:'Inter';
+}
+.disc-form{display:none;margin:0 15px 13px;gap:8px;}
+.disc-form.show{display:flex;}
+.disc-form select,.disc-form input{
+  background:var(--card2);border:1px solid var(--line2);color:var(--text);
+  border-radius:7px;padding:8px;font-size:12px;font-family:'Inter';
+}
+.disc-form select{flex:0 0 90px;}
+.disc-form input{flex:1;min-width:0;}
+.disc-apply{background:var(--brass);color:var(--ink);border:none;border-radius:7px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;}
+
+/* collapsible completed */
+.collapse-hd{
+  display:flex;align-items:center;justify-content:space-between;cursor:pointer;
+  padding:10px 0;color:var(--dim);font-size:12px;font-weight:600;
+}
+.collapse-arrow{transition:transform .2s;}
+.collapse-arrow.open{transform:rotate(180deg);}
+.collapse-body{display:none;}
+.collapse-body.open{display:block;}
+
+.empty{text-align:center;padding:50px 20px;color:var(--dim2);}
+.empty-icon{font-size:36px;margin-bottom:10px;opacity:0.5;}
+
+/* ════ MENU TAB ════ */
+.menu-cat{margin-bottom:20px;}
+.menu-cat-title{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim2);margin-bottom:9px;font-weight:700;}
+.menu-row{
+  display:flex;align-items:center;gap:11px;background:var(--card);
+  border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin-bottom:7px;
+}
+.menu-row.soldout{opacity:0.5;}
+.menu-emoji{font-size:20px;}
+.menu-info{flex:1;min-width:0;}
+.menu-name{font-size:13px;font-weight:600;}
+.menu-price{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;}
+.toggle{
+  width:42px;height:24px;border-radius:14px;background:var(--card2);border:1px solid var(--line2);
+  position:relative;cursor:pointer;flex-shrink:0;transition:background .15s;
+}
+.toggle.on{background:var(--green);border-color:var(--green);}
+.toggle-knob{
+  width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;
+  transition:transform .15s;
+}
+.toggle.on .toggle-knob{transform:translateX(18px);}
+.toggle-lbl{font-size:9px;color:var(--dim2);text-align:center;margin-top:2px;}
+
+/* ════ STATS TAB ════ */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
+.stat-card{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;
+}
+.stat-val{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--brass);}
+.stat-lbl{font-size:10.5px;color:var(--dim);margin-top:3px;letter-spacing:0.5px;text-transform:uppercase;}
+.top-items{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;}
+.top-item-row{margin-bottom:12px;}
+.top-item-row:last-child{margin-bottom:0;}
+.ti-top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;}
+.ti-name{font-weight:600;}
+.ti-qty{color:var(--dim);font-family:'JetBrains Mono',monospace;}
+.ti-bar-bg{height:6px;background:var(--card2);border-radius:4px;overflow:hidden;}
+.ti-bar-fill{height:100%;background:linear-gradient(90deg,var(--brass-d),var(--brass));border-radius:4px;}
+.stat-date{font-size:11px;color:var(--dim2);margin-bottom:14px;font-family:'JetBrains Mono',monospace;}
+
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--card2);border:1px solid var(--line2);color:var(--text);
+  padding:11px 20px;border-radius:30px;font-size:12.5px;font-weight:500;
+  z-index:900;opacity:0;transition:all .28s;white-space:nowrap;box-shadow:var(--shadow);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-mark">
+      <div class="login-mark-icon">☕</div>
+      <div>
+        <div class="login-mark-text">Café Fams</div>
+        <div class="login-mark-sub">Control Room</div>
+      </div>
+    </div>
+    <div class="login-title">Welcome back</div>
+    <div class="login-sub">Enter your admin password to continue</div>
+    <div class="login-field">
+      <input type="password" class="login-input" id="pwInput" placeholder="••••••••" autocomplete="off">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Unlock Dashboard</button>
+    <div class="login-err" id="loginErr">Wrong password — try again.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="tb-mark">
+      <div class="tb-icon">☕</div>
+      <div class="tb-text">
+        <div class="tb-title">Control Room</div>
+        <div class="tb-clock" id="clock">--:--:--</div>
+      </div>
+    </div>
+    <div class="tb-live"><div class="tb-dot"></div>LIVE</div>
+    <button class="tb-logout" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tabbtn on" onclick="showView('orders',this)">📋 Orders <span class="tab-badge" id="activeBadge" style="display:none">0</span></button>
+    <button class="tabbtn" onclick="showView('menu',this)">🍽️ Menu</button>
+    <button class="tabbtn" onclick="showView('stats',this)">📊 Stats</button>
+  </div>
+
+  <div class="content">
+    <!-- ORDERS -->
+    <div class="view on" id="vOrders">
+      <div class="sec-hd">
+        <div class="sec-title">Active Orders <span class="sec-count" id="activeCount">0</span></div>
+        <button class="refresh-btn" onclick="loadOrders(true)">⟳</button>
+      </div>
+      <div class="tickets" id="activeTickets"></div>
+
+      <div class="collapse-hd" onclick="toggleCollapse()">
+        <span>Completed Today (<span id="completedCount">0</span>)</span>
+        <span class="collapse-arrow" id="collapseArrow">▾</span>
+      </div>
+      <div class="collapse-body" id="completedBody">
+        <div class="tickets" id="completedTickets"></div>
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <div class="view" id="vMenu">
+      <div class="sec-hd"><div class="sec-title">Menu Availability</div></div>
+      <div id="menuList"></div>
+    </div>
+
+    <!-- STATS -->
+    <div class="view" id="vStats">
+      <div class="sec-hd">
+        <div class="sec-title">Today's Performance</div>
+        <button class="refresh-btn" onclick="loadStats()">⟳</button>
+      </div>
+      <div class="stat-date" id="statDate">—</div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-val" id="statOrders">0</div><div class="stat-lbl">Orders</div></div>
+        <div class="stat-card"><div class="stat-val" id="statRevenue">₹0</div><div class="stat-lbl">Revenue</div></div>
+        <div class="stat-card"><div class="stat-val" id="statAvg">₹0</div><div class="stat-lbl">Avg Order</div></div>
+        <div class="stat-card"><div class="stat-val" id="statItems">0</div><div class="stat-lbl">Items Sold</div></div>
+      </div>
+      <div class="sec-hd"><div class="sec-title">Top Dishes</div></div>
+      <div class="top-items" id="topItemsList"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+const BACKEND = 'https://cafefams-backend-production.up.railway.app';
+const KEY_STORAGE = 'cafefams_admin_key';
+
+let adminKey = localStorage.getItem(KEY_STORAGE) || '';
+let pollTimer = null;
+let seenIds = new Set();
+let firstLoad = true;
+let completedOpen = false;
+let audioCtx = null;
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+window.addEventListener('load', () => {
+  if (adminKey) {
+    verifyAndEnter();
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+});
+
+function updateClock(){
+  const t = new Date().toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata',hour12:true,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('clock').textContent = t + ' IST';
+}
+
+// ══════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════
+document.getElementById('pwInput').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+async function doLogin(){
+  const pw = document.getElementById('pwInput').value;
+  if(!pw) return;
+  try{
+    const r = await fetch(`${BACKEND}/api/admin/login`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({password:pw})
+    });
+    const d = await r.json();
+    if(d.success){
+      adminKey = pw;
+      localStorage.setItem(KEY_STORAGE, pw);
+      enterApp();
+    } else {
+      document.getElementById('loginErr').classList.add('show');
+    }
+  }catch(e){
+    document.getElementById('loginErr').textContent = 'Connection failed. Check internet.';
+    document.getElementById('loginErr').classList.add('show');
+  }
+}
+
+async function verifyAndEnter(){
+  try{
+    const r = await fetch(`${BACKEND}/api/admin/orders`,{headers:{'x-admin-key':adminKey}});
+    if(r.ok){ enterApp(); }
+    else { localStorage.removeItem(KEY_STORAGE); adminKey=''; }
+  }catch(e){}
+}
+
+function enterApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').classList.add('on');
+  loadOrders(true);
+  loadMenuAdmin();
+  loadStats();
+  pollTimer = setInterval(()=>loadOrders(false), 8000);
+}
+
+function logout(){
+  localStorage.removeItem(KEY_STORAGE);
+  adminKey='';
+  clearInterval(pollTimer);
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('pwInput').value='';
+}
+
+// ══════════════════════════════════════════════
+// API HELPER
+// ══════════════════════════════════════════════
+async function api(path, opts={}){
+  const res = await fetch(`${BACKEND}${path}`, {
+    ...opts,
+    headers:{ 'Content-Type':'application/json','x-admin-key':adminKey, ...(opts.headers||{}) }
+  });
+  if(res.status===401){ logout(); throw new Error('Unauthorized'); }
+  return res.json();
+}
+
+// ══════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════
+function showView(name, btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('v'+name[0].toUpperCase()+name.slice(1)).classList.add('on');
+  btn.classList.add('on');
+}
+
+function toggleCollapse(){
+  completedOpen = !completedOpen;
+  document.getElementById('completedBody').classList.toggle('open', completedOpen);
+  document.getElementById('collapseArrow').classList.toggle('open', completedOpen);
+}
+
+// ══════════════════════════════════════════════
+// SOUND
+// ══════════════════════════════════════════════
+function chime(){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    const t = audioCtx.currentTime;
+    [880, 1320].forEach((freq,i)=>{
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.001, t + i*0.14);
+      gain.gain.exponentialRampToValueAtTime(0.18, t + i*0.14 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + i*0.14 + 0.3);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(t + i*0.14); osc.stop(t + i*0.14 + 0.32);
+    });
+  }catch(e){}
+}
+
+// ══════════════════════════════════════════════
+// ORDERS
+// ══════════════════════════════════════════════
+function elapsed(iso){
+  const mins = Math.floor((Date.now() - new Date(iso))/60000);
+  if(mins < 1) return 'just now';
+  if(mins < 60) return mins+'m ago';
+  return Math.floor(mins/60)+'h '+(mins%60)+'m ago';
+}
+
+async function loadOrders(showToastOnLoad){
+  try{
+    const d = await api('/api/admin/orders');
+    if(!d.success) return;
+    renderOrders(d.orders);
+  }catch(e){
+    if(showToastOnLoad) showToast('Failed to load orders');
+  }
+}
+
+function renderOrders(list){
+  const active = list.filter(o => o.status==='confirmed' && o.kitchenStatus!=='served');
+  const completed = list.filter(o => o.kitchenStatus==='served' || o.status==='cancelled');
+
+  document.getElementById('activeCount').textContent = active.length;
+  document.getElementById('completedCount').textContent = completed.length;
+  const badge = document.getElementById('activeBadge');
+  if(active.length>0){ badge.style.display='inline-block'; badge.textContent=active.length; }
+  else badge.style.display='none';
+
+  // detect new orders for chime
+  let hasNew = false;
+  active.forEach(o=>{
+    if(!seenIds.has(o.orderId)){
+      if(!firstLoad) hasNew = true;
+      seenIds.add(o.orderId);
+    }
+  });
+  if(hasNew) chime();
+  firstLoad = false;
+
+  document.getElementById('activeTickets').innerHTML = active.length
+    ? active.map(o=>ticketHTML(o, true)).join('')
+    : `<div class="empty"><div class="empty-icon">🍃</div>No active orders right now</div>`;
+
+  document.getElementById('completedTickets').innerHTML = completed.length
+    ? completed.map(o=>ticketHTML(o, false)).join('')
+    : `<div class="empty" style="padding:20px"><div class="empty-icon" style="font-size:24px">✓</div>Nothing completed yet</div>`;
+}
+
+function ticketHTML(o, isFresh){
+  const itemsHtml = (o.items&&o.items.length)
+    ? o.items.map(i=>`<div class="titem"><span class="titem-name">${i.name} ×${i.qty}</span><span class="titem-amt">₹${i.price*i.qty}</span></div>`).join('')
+    : `<div class="titem"><span class="titem-name">${(o.message||'').slice(0,60)}</span></div>`;
+
+  const noteHtml = o.note ? `<div class="ticket-note">📝 ${o.note}</div>` : '';
+
+  const stages = ['pending','preparing','ready','served'];
+  const stepperHtml = o.status==='cancelled'
+    ? `<div class="cancelled-ribbon">✕ CANCELLED BY CUSTOMER</div>`
+    : `<div class="stepper">${stages.map(s=>`
+        <div class="step ${o.kitchenStatus===s?'active '+s:''}" onclick="setStatus('${o.orderId}','${s}')">${s}</div>
+      `).join('')}</div>`;
+
+  const discTag = o.discount ? `<div class="trow"><span class="disc-tag">Discount (${o.discount.type==='percent'?o.discount.value+'%':'₹'+o.discount.value})</span><span class="disc-tag">−₹${o.discount.amount}</span></div>` : '';
+
+  const discControls = (o.status==='cancelled') ? '' : `
+    <button class="disc-toggle" onclick="toggleDiscForm('${o.orderId}')">🏷️ Apply discount</button>
+    <div class="disc-form" id="df-${o.orderId}">
+      <select id="dt-${o.orderId}"><option value="percent">% off</option><option value="flat">₹ off</option></select>
+      <input type="number" id="dv-${o.orderId}" placeholder="Value">
+      <button class="disc-apply" onclick="applyDiscount('${o.orderId}')">Apply</button>
+    </div>`;
+
+  return `
+    <div class="ticket ${isFresh?'fresh':''}">
+      <div class="ticket-hd">
+        <span class="ticket-id">${o.orderId}</span>
+        <span class="ticket-table">TABLE ${o.tableNumber}</span>
+      </div>
+      <div class="ticket-body">
+        <div class="ticket-guest">
+          <span class="guest-name">${o.guestName||'Guest'}</span>
+          <span class="guest-meta">👥 ${o.guestCount||1}</span>
+          ${o.guestPhone?`<span class="guest-meta">📱 ${o.guestPhone}</span>`:''}
+          <span class="guest-meta mono">· ${elapsed(o.time)}</span>
+        </div>
+        <div class="ticket-items">${itemsHtml}</div>
+        ${noteHtml}
+        <div class="ticket-totals">
+          <div class="trow"><span>Subtotal</span><span class="mono">₹${o.subtotal}</span></div>
+          <div class="trow"><span>GST (5%)</span><span class="mono">₹${o.gst}</span></div>
+          ${discTag}
+          <div class="trow grand"><span>Total</span><span>₹${o.total}</span></div>
+        </div>
+      </div>
+      ${stepperHtml}
+      ${discControls}
+    </div>`;
+}
+
+async function setStatus(orderId, kitchenStatus){
+  try{
+    const d = await api('/api/admin/order-status',{method:'POST',body:JSON.stringify({orderId,kitchenStatus})});
+    if(d.success){ showToast(`${orderId} → ${kitchenStatus}`); loadOrders(false); }
+  }catch(e){ showToast('Update failed'); }
+}
+
+function toggleDiscForm(orderId){
+  document.getElementById('df-'+orderId).classList.toggle('show');
+}
+
+async function applyDiscount(orderId){
+  const type = document.getElementById('dt-'+orderId).value;
+  const value = parseFloat(document.getElementById('dv-'+orderId).value);
+  if(!value || value<=0){ showToast('Enter a valid value'); return; }
+  try{
+    const d = await api('/api/admin/discount',{method:'POST',body:JSON.stringify({orderId,type,value})});
+    if(d.success){ showToast(`Discount applied — new total ₹${d.newTotal}`); loadOrders(false); }
+    else showToast(d.error||'Failed');
+  }catch(e){ showToast('Discount failed'); }
+}
+
+// ══════════════════════════════════════════════
+// MENU / SOLD-OUT
+// ══════════════════════════════════════════════
+async function loadMenuAdmin(){
+  try{
+    const d = await api('/api/admin/menu');
+    if(d.success) renderMenuAdmin(d.menu);
+  }catch(e){}
+}
+
+function renderMenuAdmin(menu){
+  let html='';
+  Object.entries(menu).forEach(([cat,items])=>{
+    html += `<div class="menu-cat"><div class="menu-cat-title">${cat}</div>`;
+    items.forEach(it=>{
+      html += `
+        <div class="menu-row ${it.soldOut?'soldout':''}" id="mrow-${it.id}">
+          <span class="menu-emoji">${it.emoji}</span>
+          <div class="menu-info">
+            <div class="menu-name">${it.name}</div>
+            <div class="menu-price">₹${it.price}</div>
+          </div>
+          <div>
+            <div class="toggle ${it.soldOut?'':'on'}" onclick="flipSoldOut('${it.id}', ${!it.soldOut})"><div class="toggle-knob"></div></div>
+            <div class="toggle-lbl">${it.soldOut?'Sold out':'In stock'}</div>
+          </div>
+        </div>`;
+    });
+    html += '</div>';
+  });
+  document.getElementById('menuList').innerHTML = html;
+}
+
+async function flipSoldOut(itemId, makeSoldOut){
+  try{
+    const d = await api('/api/admin/sold-out',{method:'POST',body:JSON.stringify({itemId,soldOut:makeSoldOut})});
+    if(d.success){
+      showToast(makeSoldOut?`${d.name} marked sold out`:`${d.name} back in stock`);
+      loadMenuAdmin();
+    }
+  }catch(e){ showToast('Failed to update'); }
+}
+
+// ══════════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════════
+async function loadStats(){
+  try{
+    const d = await api('/api/admin/stats');
+    if(!d.success) return;
+    document.getElementById('statDate').textContent = d.date;
+    document.getElementById('statOrders').textContent = d.totalOrders;
+    document.getElementById('statRevenue').textContent = '₹'+d.totalRevenue;
+    document.getElementById('statAvg').textContent = '₹'+d.avgOrderValue;
+    const totalItems = d.topItems.reduce((s,i)=>s+i.qty,0);
+    document.getElementById('statItems').textContent = totalItems;
+
+    const maxQty = d.topItems.length ? d.topItems[0].qty : 1;
+    document.getElementById('topItemsList').innerHTML = d.topItems.length
+      ? d.topItems.map(i=>`
+          <div class="top-item-row">
+            <div class="ti-top"><span class="ti-name">${i.name}</span><span class="ti-qty">${i.qty} sold</span></div>
+            <div class="ti-bar-bg"><div class="ti-bar-fill" style="width:${(i.qty/maxQty*100)}%"></div></div>
+          </div>`).join('')
+      : `<div style="color:var(--dim);font-size:12px;text-align:center;padding:10px">No orders yet today</div>`;
+  }catch(e){}
+}
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+let toastTimer;
+function showToast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2600);
+}
+</script>
+</body>
+</html>
